@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Document QA & Summary Assistant</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 700px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #1a365d; }
+        textarea, input[type="text"] { width: 100%; padding: 10px; margin-top: 8px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #2b6cb0; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #1a365d; }
+        .result-box { margin-top: 20px; padding: 15px; background: #ebf8ff; border-left: 4px solid #3182ce; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>AI-Powered Document QA & Summary Assistant</h2>
+        <p><i>Powered by Python, Flask, LangChain, and Hugging Face principles.</i></p>
+        
+        <h3>1. Ingest Document Context</h3>
+        <textarea id="docText" rows="5" placeholder="Paste your document text here..."></textarea>
+        <button onclick="uploadDocument()">Process Document</button>
+        <p id="uploadStatus" style="font-size: 14px; margin-top: 5px; color: green;"></p>
+
+        <h3 style="margin-top: 25px;">2. Ask Questions</h3>
+        <input type="text" id="userQuery" placeholder="Ask a question about the document...">
+        <button onclick="askQuestion()">Get Answer</button>
+        
+        <div class="result-box" id="resultBox" style="display:none;">
+            <strong>Answer:</strong>
+            <p id="answerText"></p>
+        </div>
+    </div>
+
+    <script>
+        function uploadDocument() {
+            let text = document.getElementById('docText').value;
+            fetch('/upload', {
+                method: 'POST',
+                headers: {'Content-Type': 'x-www-form-urlencoded'},
+                body: 'document_text=' + encodeURIComponent(text)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('uploadStatus').innerText = data.message;
+            });
+        }
+
+        function askQuestion() {
+            let question = document.getElementById('userQuery').value;
+            fetch('/ask', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({question: question})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('resultBox').style.display = 'block';
+                document.getElementById('answerText').innerText = data.answer;
+            });
+        }
+    </script>
+</body>
+</html>
